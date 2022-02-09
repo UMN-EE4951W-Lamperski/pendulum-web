@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- HTML headers information -->
+  <%- include('../partials/head.ejs') %>
+  <script type="text/javascript" src="/static/js/app.js"></script>
+</head>
+
+<body>
+  <%- include('../partials/nav.ejs') %>
+  <div class="header">
+    <!-- Get the navbar -->
+
+    <div class="row">
+      <div class="col">
+
+        <h1 id="title2">Homepage</h1>
+        <hr>
+
+
+        <h3 id="subtitle1">Please upload a Python file (.py file extension) onto the Inverted Pendulum</h3>
+        <!--**************************Send form data to web server**************************-->
+        <form method="POST" action="/index" enctype="multipart/form-data">
+          <p><input type="file" name="file" accept=".py" /></p>
+          <p><input type="submit" value="Upload File" onclick="update()"></p>
+        </form>
+
+        For file upload progress bar
+        <div id="myProgress">
+          <div id="myBar"></div>
+        </div>
+
+        <!--The following lines are for the warning flash() messages-->
+        <% if (errors) { %>
+        <% for (const message in errors) { %>
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+          <span>
+            <% message %>
+          </span>
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <% } %>
+        <% } %>
+
+        <!--The following lines are for the danger flash() messages-->
+        <% if (errors) { %>
+        <% for (const message in errors) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          <span>
+            <% message %>
+          </span>
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <% } %>
+        <% } %>
+
+
+        <div class="mb-3">
+          <div class="form-group">
+            <label id="Start">Start pendulum: </label>
+            <!-- <button class="btn btn-primary" id="onbutton">Actuate!</button> -->
+            <button type="button" id=button1 onclick="window.location.href='{{ url_for( 'run_test_file') }}';">Actuate!</button>
+          </div>
+        </div>
+        <hr>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
