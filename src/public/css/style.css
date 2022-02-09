@@ -1,0 +1,226 @@
+body {
+    background-color: black;
+}
+
+.header {
+    color: white;
+    text-align: center;
+    vertical-align: middle;
+    position: relative;
+    /* top: 30px; */
+    margin: 5px;
+    font-family: "Times New Roman", Times, serif;
+}
+
+
+/* Customize HTML paragraph element margins */
+
+p {
+    display: block;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    margin-left: 15%;
+    margin-right: 15%;
+}
+
+
+/* Customize the positioning of the logo */
+
+
+
+
+/*-------------------------Buttons-----------------------------------------------------*/
+
+
+/* Used for id=button1 */
+
+#button1 {
+    background-color: #0a3f73;
+    border: solid;
+    border-color: #d5d6d2;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    font-family: "Constantia", sans-serif;
+    border-radius: 10px;
+    display: inline-block;
+    font-size: 20px;
+}
+
+
+/* Used for id=button1 - What the button looks like when a user puts one's cursor on it */
+
+#button1:hover {
+    background-color: white;
+    color: maroon;
+    cursor: pointer;
+}
+
+
+/* Used for id=button2 */
+
+#button2 {
+    /* #ebcba9 is similar to a tan color */
+    background-color: #ebcba9;
+    border: solid;
+    border-color: #d5d6d2;
+    /* #693100 is similar to a brown color */
+    color: #693100;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    font-family: "Constantia", sans-serif;
+    border-radius: 10px;
+    display: inline-block;
+    font-size: 20px;
+}
+
+
+/* Used for id=button2 - What the button looks like when a user puts one's cursor on it */
+
+#button2:hover {
+    background-color: white;
+    color: #0a3f73;
+    cursor: pointer;
+}
+
+
+/* Used for id=button2 */
+
+#button3 {
+    /* #cf7d4e is similar to a light brown color */
+    background-color: #cf7d4e;
+    border: solid;
+    border-color: #d5d6d2;
+    /* #094f02 is similar to a dark green color */
+    color: #094f02;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    font-family: "Constantia", sans-serif;
+    border-radius: 10px;
+    display: inline-block;
+    font-size: 20px;
+}
+
+
+/* Used for id=button2 - What the button looks like when a user puts one's cursor on it */
+
+#button3:hover {
+    background-color: white;
+    color: maroon;
+    cursor: pointer;
+}
+
+a {
+    color: white;
+    text-decoration: none;
+}
+
+
+/* Used for id=main */
+
+#main {
+    color: white;
+    /* border-style: solid; */
+    /* border: 1px solid maroon; */
+    text-align: center;
+    margin: 5px;
+}
+
+#about {
+    font-size: large;
+}
+
+
+/* Used for id=title1 */
+
+#title1 {
+    font-size: xx-large;
+}
+
+
+/* Used for id=title2 */
+
+#title2 {
+    font-size: xx-large;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+
+/* Used for id=title3 */
+
+#title3 {
+    font-size: xx-large;
+    font-weight: bold;
+    margin-top: 15px;
+}
+
+#subtitle {
+    font-size: large;
+}
+
+#subtitle1 {
+    font-size: 23px;
+}
+
+#Background {
+    color: #ffbb00;
+}
+
+#Pendulum_info {
+    /* #4294cf is similar to a light blue color */
+    color: #4294cf;
+}
+
+#choose_file {
+    border: none;
+    text-decoration: none;
+    display: inline-block;
+}
+
+#submit {}
+
+
+/* Used for id=Start */
+
+#Start {
+    font-size: 25px;
+    font-weight: bold;
+    color: #ffbb00;
+}
+
+
+.navbar {
+    top: 0;
+    width: 100%;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #7a0019;
+}
+
+li {
+    float: left;
+}
+
+li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    font-family: "Raleway", sans-serif;
+    text-decoration: none;
+}
+
+
+
+li a:hover {
+    background-color: #ffcc33;
+    color: #000000;
+    /* Remove underlines from links */
+    text-decoration: none;
+}
