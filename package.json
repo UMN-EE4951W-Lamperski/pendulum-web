@@ -41,5 +41,6 @@
     "main": "dist/index.js",
     "author": "Matt Strapp <matt@mattstrapp.net>",
     "license": "MIT",
+    "type": "module",
     "private": true
 }
