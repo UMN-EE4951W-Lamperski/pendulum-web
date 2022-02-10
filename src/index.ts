@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import session from 'express-session';
 import rateLimit from 'express-rate-limit';
 import slowDown from 'express-slow-down';
+import path from 'path';
 import { env } from 'process';
 import helmet from 'helmet';
 import csurf from 'csurf';
@@ -45,8 +46,8 @@ app.use(helmet());
 
 // Add ejs as view engine
 app.set('view engine', 'ejs');
-app.set('views', 'views/pages');
-app.use('/public', express.static('public'));
+app.set('views', path.join(__dirname, 'views/pages'));
+app.use('/public', express.static(path.join(__dirname, 'public')));
 
 app.get('/', csrf, (req: Request, res: Response) => {
     res.render('index', {
