@@ -6,15 +6,18 @@ import path from 'path';
 import { env } from 'process';
 import helmet from 'helmet';
 import csurf from 'csurf';
+import cookieParser from 'cookie-parser';
+import { randomBytes } from 'crypto';
 
 const app = express();
 
 // Middleware
 const port: string = env.PORT || '2000';
 
-const csrf = csurf({ cookie: false });
+app.use(cookieParser());
+const csrf = csurf({ cookie: true });
 app.use(session({
-    secret: 'keyboard cat',
+    secret: randomBytes(50).toString('base64'),
     resave: false,
     saveUninitialized: true,
     cookie: {
