@@ -1,5 +1,4 @@
 import express, { Request, Response } from 'express';
-import session from 'express-session';
 import rateLimit from 'express-rate-limit';
 import slowDown from 'express-slow-down';
 import path from 'path';
@@ -7,7 +6,6 @@ import { env } from 'process';
 import helmet from 'helmet';
 import csurf from 'csurf';
 import cookieParser from 'cookie-parser';
-import { randomBytes } from 'crypto';
 
 const app = express();
 
@@ -16,15 +14,6 @@ const port: string = env.PORT || '2000';
 
 app.use(cookieParser());
 const csrf = csurf({ cookie: true });
-app.use(session({
-    secret: randomBytes(50).toString('base64'),
-    resave: false,
-    saveUninitialized: true,
-    cookie: {
-        secure: false,
-        maxAge: 1000 * 60 * 60 * 24 * 7,
-    },
-}));
 const rateLimiter = rateLimit({
     windowMs: 1 * 60 * 1000, // 1 minute
     max: 30, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
