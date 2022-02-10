@@ -36,7 +36,7 @@
         "tsc": "tsc --project ./tsconfig.json"
     },
     "name": "4951w-pendulum-webapp",
-    "version": "0.0.1",
+    "version": "0.1.0",
     "description": "The webapp for Professor Lamperski's Pendulum",
     "main": "dist/index.js",
     "author": "Matt Strapp <matt@mattstrapp.net>",

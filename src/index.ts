@@ -13,6 +13,15 @@ const app = express();
 const port: string = env.PORT || '2000';
 
 const csrf = csurf({ cookie: false });
+app.use(session({
+    secret: 'keyboard cat',
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        secure: false,
+        maxAge: 1000 * 60 * 60 * 24 * 7,
+    },
+}));
 const rateLimiter = rateLimit({
     windowMs: 1 * 60 * 1000, // 1 minute
     max: 30, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
@@ -38,9 +47,7 @@ app.use(helmet());
 // Add ejs as view engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views/pages'));
-
 app.use('/public', express.static(path.join(__dirname, 'public')));
-
 
 app.get('/', csrf, (req: Request, res: Response) => {
     res.render('index', {
