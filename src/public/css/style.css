@@ -1,12 +1,13 @@
 body {
     background-color: black;
-}
-
-.header {
     color: white;
     text-align: center;
     vertical-align: middle;
     position: relative;
+}
+
+.header {
+
     /* top: 30px; */
     margin: 5px;
     font-family: "Times New Roman", Times, serif;
@@ -24,17 +25,12 @@ p {
 }
 
 
-/* Customize the positioning of the logo */
-
-
-
-
 /*-------------------------Buttons-----------------------------------------------------*/
 
 
 /* Used for id=button1 */
 
-#button1 {
+#actuate_but {
     background-color: #0a3f73;
     border: solid;
     border-color: #d5d6d2;
@@ -51,67 +47,12 @@ p {
 
 /* Used for id=button1 - What the button looks like when a user puts one's cursor on it */
 
-#button1:hover {
+#actuate_but:hover {
     background-color: white;
     color: maroon;
     cursor: pointer;
 }
 
-
-/* Used for id=button2 */
-
-#button2 {
-    /* #ebcba9 is similar to a tan color */
-    background-color: #ebcba9;
-    border: solid;
-    border-color: #d5d6d2;
-    /* #693100 is similar to a brown color */
-    color: #693100;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    font-family: "Constantia", sans-serif;
-    border-radius: 10px;
-    display: inline-block;
-    font-size: 20px;
-}
-
-
-/* Used for id=button2 - What the button looks like when a user puts one's cursor on it */
-
-#button2:hover {
-    background-color: white;
-    color: #0a3f73;
-    cursor: pointer;
-}
-
-
-/* Used for id=button2 */
-
-#button3 {
-    /* #cf7d4e is similar to a light brown color */
-    background-color: #cf7d4e;
-    border: solid;
-    border-color: #d5d6d2;
-    /* #094f02 is similar to a dark green color */
-    color: #094f02;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    font-family: "Constantia", sans-serif;
-    border-radius: 10px;
-    display: inline-block;
-    font-size: 20px;
-}
-
-
-/* Used for id=button2 - What the button looks like when a user puts one's cursor on it */
-
-#button3:hover {
-    background-color: white;
-    color: maroon;
-    cursor: pointer;
-}
 
 a {
     color: white;
@@ -134,12 +75,6 @@ a {
 }
 
 
-/* Used for id=title1 */
-
-#title1 {
-    font-size: xx-large;
-}
-
 
 /* Used for id=title2 */
 
@@ -158,14 +93,6 @@ a {
     margin-top: 15px;
 }
 
-#subtitle {
-    font-size: large;
-}
-
-#subtitle1 {
-    font-size: 23px;
-}
-
 #Background {
     color: #ffbb00;
 }
@@ -174,14 +101,6 @@ a {
     /* #4294cf is similar to a light blue color */
     color: #4294cf;
 }
-
-#choose_file {
-    border: none;
-    text-decoration: none;
-    display: inline-block;
-}
-
-#submit {}
 
 
 /* Used for id=Start */
@@ -203,11 +122,11 @@ a {
     background-color: #7a0019;
 }
 
-li {
+.navbar li {
     float: left;
 }
 
-li a {
+.navbar li a {
     display: block;
     color: white;
     text-align: center;
@@ -216,9 +135,7 @@ li a {
     text-decoration: none;
 }
 
-
-
-li a:hover {
+.navbar li a:hover {
     background-color: #ffcc33;
     color: #000000;
     /* Remove underlines from links */

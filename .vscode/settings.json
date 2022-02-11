@@ -6,5 +6,8 @@
         "**/**.js": {
             "when": "$(basename).tsx"
         }
-    }
+    },
+    "cSpell.words": [
+        "fileupload"
+    ]
 }
