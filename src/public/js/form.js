@@ -1,15 +1,16 @@
+// File submit AJAX request
 document.getElementById('upload').onsubmit = function () {
-    var data = new FormData(document.getElementById('upload'));
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', '/api/upload');
-    xhr.send(data);
+    let xhr = new XMLHttpRequest();
+    xhr.open('POST', '/api/v1/upload');
+    let formData = new FormData(this);
+    xhr.send(formData);
     xhr.onreadystatechange = function () {
-        if (xhr.readyState == 4 && xhr.status == 200) {
-            var response = JSON.parse(xhr.responseText);
-            if (response.success) {
-                document.getElementById('success').style.display = 'block';
+        if (xhr.readyState === 4) {
+            let response = JSON.parse(xhr.responseText);
+            if (xhr.status === 200) {
+                console.log(response);
             } else {
-                document.getElementById('error').style.display = 'block';
+                console.log(response.error);
             }
         }
     };
