@@ -2,25 +2,36 @@
 <html lang="en">
 
 <head>
-  <!-- HTML headers information -->
+  <!-- HTML headers -->
   <%- include('../partials/head.ejs') %>
+  <title>Upload your code here!</title>
   <script type="module" src="public/js/form.js" defer></script>
 </head>
 
 <body>
   <!-- Get the navbar -->
   <%- include('../partials/nav.ejs') %>
-  <br />
-  <h2>Please upload a Python file (.py file extension) to run on the Inverted Pendulum.</h2>
-  <br /> <br />
-  <form id="upload" enctype="multipart/form-data">
-    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-    <input type="file" name="file" accept=".py" />
-    <br /> <br />
-    <br /> <br />
-    <label id="Start">Start pendulum: </label>
-    <input type="submit" id="actuate_but" value="Actuate!" />
-  </form>
+  <div id="nojs">
+    <h1>Please enable JavaScript to use the inverted pendulum.</h1>
+  </div>
+  <div id="block" hidden="true">
+    <br />
+    <h1>Please upload a Python file (.py file extension) to run on the Inverted Pendulum.</h1>
+    <h3>A heavily documented example can be <a href="public/example.py">found here</a>.</h3>
+    <h2>
+      <span class="error" id="upload-err"></span>
+      <span class="error" id="actuate-err"></span>
+    </h2>
+
+    <form id="upload" enctype="multipart/form-data">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <input type="file" name="file" accept=".py" />
+      <br /> <br />
+      <label id="Start">Start pendulum: </label>
+      <input type="submit" id="actuate_but" value="Actuate!" />
+    </form>
+  </span>
+
 </body>
 
 </html>

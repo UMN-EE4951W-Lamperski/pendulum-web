@@ -7,8 +7,6 @@ body {
 }
 
 .header {
-
-    /* top: 30px; */
     margin: 5px;
     font-family: "Times New Roman", Times, serif;
 }
@@ -55,43 +53,20 @@ p {
 
 
 a {
-    color: white;
+    color: blue;
     text-decoration: none;
 }
 
 
-/* Used for id=main */
+/* Used for the about page*/
 
-#main {
+.about {
     color: white;
-    /* border-style: solid; */
-    /* border: 1px solid maroon; */
     text-align: center;
     margin: 5px;
-}
-
-#about {
     font-size: large;
 }
 
-
-
-/* Used for id=title2 */
-
-#title2 {
-    font-size: xx-large;
-    font-weight: bold;
-    margin-top: 20px;
-}
-
-
-/* Used for id=title3 */
-
-#title3 {
-    font-size: xx-large;
-    font-weight: bold;
-    margin-top: 15px;
-}
 
 #Background {
     color: #ffbb00;
@@ -140,4 +115,9 @@ a {
     color: #000000;
     /* Remove underlines from links */
     text-decoration: none;
+}
+
+.error {
+    color: red;
+    font-size: larger;
 }
