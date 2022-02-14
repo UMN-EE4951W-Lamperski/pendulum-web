@@ -73,17 +73,17 @@ api.route('/actuate')
         try {
             await access(req.body.path);
         } catch (err) {
-            return res.status(403).json({ error: 'File is not accessible.' });
+            return res.status(403).json({ error: 'File is not accessible or does not exist.' });
         }
 
 
         const stats = await stat(req.body.path);
         // Make sure the file being requested to run is a regular file
         if (!stats.isFile())
-            return res.status(403).json({ error: 'File is not a regular file.' });
+            return res.status(400).json({ error: 'File is not a regular file.' });
         // Make sure the file being requested to run is not a directory
         if (stats.isDirectory())
-            return res.status(403).json({ error: 'File is a directory.' });
+            return res.status(400).json({ error: 'File is a directory.' });
 
         const escaped = quote( [ req.body.path ] );
         // Run the code
