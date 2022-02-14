@@ -87,7 +87,11 @@ api.route('/actuate')
 
         const escaped = quote([ 'python', req.body.path]);
         // Run the code
-        exec(escaped, (err, stdout, stderr) => {
+        /*
+            TODO: MAKE THIS MORE SECURE
+            Execing random things is probably a bad idea, and snyk is complaining that it isn't escaped properly.
+        */
+            exec(escaped, (err, stdout, stderr) => {
             if (err)
                 return res.status(500).json({ error: 'An unknown error occurred while executing the file.', error_msg: stderr });
 
