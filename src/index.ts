@@ -12,6 +12,13 @@ const app = express();
 
 /* MIDDLEWARE */
 
+// Hide the software being used (helps security)
+app.use(helmet());
+
+// CSRF protection
+app.use(cookieParser());
+const csrf = csurf({ cookie: true });
+
 // Rate limiting
 const rateLimiter = rateLimit({
     windowMs: 1 * 60 * 1000, // 1 minute
@@ -21,13 +28,6 @@ const rateLimiter = rateLimit({
 });
 app.use(rateLimiter);
 
-// CSRF protection
-app.use(cookieParser());
-const csrf = csurf({ cookie: true });
-
-
-// Hide the software being used (helps security)
-app.use(helmet());
 
 // The API
 app.use('/api/v1/', api);

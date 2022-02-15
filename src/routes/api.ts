@@ -11,6 +11,12 @@ import { spawn } from 'child_process';
 
 const api = express.Router();
 
+// Use JSON parser for API requests and responses
+api.use(express.json());
+// CSRF protection
+api.use(cookieParser());
+const csrf = csurf({ cookie: true });
+
 // For file uploads
 api.use(fileUpload({
     preserveExtension: true, // Preserve file extension on upload
@@ -21,12 +27,6 @@ api.use(fileUpload({
     debug: false, // Log debug information
 }));
 
-// CSRF protection
-api.use(cookieParser());
-const csrf = csurf({ cookie: true });
-
-// Use JSON parser for API requests and responses
-api.use(express.json());
 
 /*
     Upload a file to the server
@@ -101,6 +101,7 @@ api.route('/upload')
 
 */
 api.route('/actuate')
+    // Snyk error mitigation, should be fine since the rate limiting is already in place
     // file deepcode ignore NoRateLimitingForExpensiveWebOperation: This is already rate limited by the website, so we don't need to do it again
     .post(csrf, async (req: Request, res: Response) => {
         // Make sure the file being requested to run exists
