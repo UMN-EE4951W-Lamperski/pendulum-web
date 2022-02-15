@@ -1,9 +1,12 @@
 import express, { Request, Response } from 'express';
+// Middleware for security
 import csurf from 'csurf';
 import cookieParser from 'cookie-parser';
 import fileUpload, { UploadedFile } from 'express-fileupload';
 import rateLimit from 'express-rate-limit';
+// For executing the python scripts
 import { access, stat } from 'fs/promises';
+import { Stats } from 'fs';
 import { quote } from 'shell-quote';
 import { spawn } from 'child_process';
 
@@ -32,7 +35,28 @@ api.use(rateLimiter);
 api.use(cookieParser());
 const csrf = csurf({ cookie: true });
 
+// Use JSON parser for API requests and responses
 api.use(express.json());
+
+/*
+    Upload a file to the server
+    POST /api/v1/upload
+    Parameters:
+        files: The file to upload
+    Returns:
+        201:
+            {
+                "message": "File uploaded successfully",
+                "file": {
+                    "name": "file.py",
+                    "path": "/tmp/file-538126",
+                }
+            }
+        400 when there is no file
+        413 when the file is too large
+        415 when the file's MIME type is not text/x-python
+        500 for any other errors
+*/
 api.route('/upload')
     .post(csrf, (req: Request, res: Response) => {
         try {
@@ -50,7 +74,7 @@ api.route('/upload')
             if (file.mimetype !== 'text/x-python')
                 return res.status(415).json({ error: 'File uploaded was not a Python file.' });
 
-            res.status(200).json({ file: file.name, path: file.tempFilePath, csrf: req.csrfToken() });
+            res.status(201).json({ file: file.name, path: file.tempFilePath, msg: 'File uploaded successfully.', csrf: req.csrfToken() });
         } catch (err) {
             // Generic error handler
             res.status(500).json({ error: 'An unknown error occurred while uploading the file.', error_msg: err });
@@ -63,9 +87,28 @@ api.route('/upload')
     });
 
 /* 
-    This route is probably a complete security hole. It allows anyone with a login cookie access to run arbitrary Python code on the server.
+    Actuate the pendulum
+    POST /api/v1/actuate
+    Parameters:
+        name: The name of the file to run, currently unused
+        path: The path to the uploaded file on the server, passed in from /api/v1/upload on the website
+    Returns:
+        200:
+            {
+                "stdout": "Hello from Python!\n",
+            }
+        400 for when the file passed in is not a regular file
+        403 when the file is not accessible
+        500:
+            {
+                "error": "Program exited with error code 1.",
+                "error_msg": "NameError: name 'sleep' is not defined",
+            }
+    
+    This route is probably a complete security nightmare. It allows anyone to run arbitrary Python code on the server.
 
-    Minimizing PE vectors like running this as a low privilege user is a must.
+    Minimizing PE vectors like running this as an extremely low privilege user is a must.
+
 */
 api.route('/actuate')
     .post(csrf, async (req: Request, res: Response) => {
@@ -77,7 +120,7 @@ api.route('/actuate')
         }
 
 
-        const stats = await stat(req.body.path);
+        const stats: Stats = await stat(req.body.path);
         // Make sure the file being requested to run is a regular file
         if (!stats.isFile())
             return res.status(400).json({ error: 'File is not a regular file.' });
@@ -88,12 +131,15 @@ api.route('/actuate')
         const escaped = quote( [ req.body.path ] );
         // Run the code
         /*
-            TODO: MAKE THIS MORE SECURE
+            TODO:
+            - Potentially add the limiter to one-per-person here
+            - Add a timeout
+                - Communicate to the machine to give up (the user as well), maybe just kill the process?
+            - Make this more secure
+                - HOW?
         */
         let output = '';
-        // NOT PORTABLE: ASSUMES PYTHON 3 IS THERE AS WELL AS ON UNIX
-        // TODO: MAKE PORTABLE
-        const actuation = spawn('/usr/bin/python', escaped.split(' '));
+        const actuation = spawn('python', escaped.split(' '));
         actuation.stdout.on('data', (data: Buffer) => {
             output += data.toString();
         });
@@ -102,7 +148,7 @@ api.route('/actuate')
         });
         actuation.on('close', (code: number) => {
             if (code !== 0)
-                res.status(500).json({ error: 'An unknown error occurred while running the file.', error_msg: output });
+                res.status(500).json({ error: `Program exited with exit code ${code}`, error_msg: output });
             res.status(200).json({ stdout: output });
         });
     })

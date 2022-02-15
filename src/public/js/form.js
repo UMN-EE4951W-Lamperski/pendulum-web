@@ -4,10 +4,12 @@ window.onload = function () {
 };  
 
 // File submit AJAX request
+// After successful upload, actuate the file by calling actuate() on the successfully uploaded file
 document.getElementById('upload').onsubmit = function () {
-    // Reset error message
+    // Reset error message and success message
     document.getElementById('upload-err').innerText = '';
     document.getElementById('actuate-err').innerText = '';
+    document.getElementById('upload-response').innerText = '';
     // Make AJAX request
     let xhr = new XMLHttpRequest();
     xhr.open('POST', '/api/v1/upload');
@@ -16,7 +18,9 @@ document.getElementById('upload').onsubmit = function () {
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4) {
             let response = JSON.parse(xhr.responseText);
-            if (xhr.status === 200) {
+            if (xhr.status === 201) {
+                // Display upload success message to the user
+                document.getElementById('upload-response').innerText = response.msg;
                 actuate(response);
             } else {
                 // Display upload error message to the user
@@ -27,9 +31,14 @@ document.getElementById('upload').onsubmit = function () {
             }
         }
     };
+    document.getElementById('upload').reset();
     return false;
 };
 
+// Actuate button AJAX request
+// Should always be called after upload
+// Implies that upload has been successful since it relies on the upload response
+// 
 function actuate(file) {
     let xhr = new XMLHttpRequest();
     xhr.open('POST', '/api/v1/actuate');

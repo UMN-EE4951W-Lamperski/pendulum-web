@@ -117,7 +117,10 @@ a {
     text-decoration: none;
 }
 
+h2 {
+    font-size: larger;
+}
+
 .error {
     color: red;
-    font-size: larger;
 }
