@@ -3,7 +3,6 @@ import express, { Request, Response } from 'express';
 import csurf from 'csurf';
 import cookieParser from 'cookie-parser';
 import fileUpload, { UploadedFile } from 'express-fileupload';
-import rateLimit from 'express-rate-limit';
 // For executing the python scripts
 import { access, stat } from 'fs/promises';
 import { Stats } from 'fs';
@@ -21,15 +20,6 @@ api.use(fileUpload({
     tempFileDir: '/tmp/', // Store files in /tmp/
     debug: false, // Log debug information
 }));
-
-// Slow down frequent requests to prevent DoS attacks
-const rateLimiter = rateLimit({
-    windowMs: 1 * 60 * 1000, // 1 minute
-    max: 10, // Limit each IP to 10 requests per `window` (here, per 1 minutes)
-    standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-    legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-});
-api.use(rateLimiter);
 
 // CSRF protection
 api.use(cookieParser());
@@ -111,6 +101,7 @@ api.route('/upload')
 
 */
 api.route('/actuate')
+    // file deepcode ignore NoRateLimitingForExpensiveWebOperation: This is already rate limited by the website, so we don't need to do it again
     .post(csrf, async (req: Request, res: Response) => {
         // Make sure the file being requested to run exists
         try {
