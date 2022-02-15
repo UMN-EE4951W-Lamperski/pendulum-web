@@ -1,13 +1,11 @@
-import express, { Request, Response } from 'express';
-// Middleware for security
-import csurf from 'csurf';
-import cookieParser from 'cookie-parser';
-import fileUpload, { UploadedFile } from 'express-fileupload';
-// For executing the python scripts
-import { access, stat } from 'fs/promises';
-import { Stats } from 'fs';
-import { quote } from 'shell-quote';
 import { spawn } from 'child_process';
+import cookieParser from 'cookie-parser';
+import csurf from 'csurf';
+import express, { Request, Response } from 'express';
+import fileUpload, { UploadedFile } from 'express-fileupload';
+import { Stats } from 'fs';
+import { access, stat } from 'fs/promises';
+import { quote } from 'shell-quote';
 
 const api = express.Router();
 
