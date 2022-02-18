@@ -17,12 +17,12 @@ const csrf = csurf({ cookie: true });
 
 // For file uploads
 api.use(fileUpload({
-  preserveExtension: true, // Preserve file extension on upload
-  safeFileNames: true, // Only allow alphanumeric characters in file names
-  limits: { fileSize: 1 * 1024 * 1024 }, // Limit file size to 1MB
-  useTempFiles: true, // Store files in temp instead of memory
-  tempFileDir: '/tmp/', // Store files in /tmp/
-  debug: false, // Log debug information
+    preserveExtension: true, // Preserve file extension on upload
+    safeFileNames: true, // Only allow alphanumeric characters in file names
+    limits: { fileSize: 1 * 1024 * 1024 }, // Limit file size to 1MB
+    useTempFiles: true, // Store files in temp instead of memory
+    tempFileDir: '/tmp/', // Store files in /tmp/
+    debug: false, // Log debug information
 }));
 
 
@@ -46,33 +46,33 @@ api.use(fileUpload({
         500 for any other errors
 */
 api.route('/upload')
-  .post(csrf, (req: Request, res: Response) => {
-    try {
-      // Check if anything was actually uploaded
-      if (!req.files || Object.keys(req.files).length === 0)
-        return res.status(400).json({ error: 'No file uploaded.' });
+    .post(csrf, (req: Request, res: Response) => {
+        try {
+            // Check if anything was actually uploaded
+            if (!req.files || Object.keys(req.files).length === 0)
+                return res.status(400).json({ error: 'No file uploaded.' });
 
-      const file: UploadedFile = req.files.file as UploadedFile; // Kludge to prevent a compiler error, only one file gets uploaded so this should be fine
+            const file: UploadedFile = req.files.file as UploadedFile; // Kludge to prevent a compiler error, only one file gets uploaded so this should be fine
 
-      // Check if the file is too large (see fileUpload.limits for the limit)
-      if (file.truncated)
-        return res.status(413).json({ error: 'File uploaded was too large.' });
+            // Check if the file is too large (see fileUpload.limits for the limit)
+            if (file.truncated)
+                return res.status(413).json({ error: 'File uploaded was too large.' });
 
-      // Check if the file is a python file
-      if (file.mimetype !== 'text/x-python')
-        return res.status(415).json({ error: 'File uploaded was not a Python file.' });
+            // Check if the file is a python file
+            if (file.mimetype !== 'text/x-python')
+                return res.status(415).json({ error: 'File uploaded was not a Python file.' });
 
-      res.status(201).json({ file: file.name, path: file.tempFilePath, msg: 'File uploaded successfully.', csrf: req.csrfToken() });
-    } catch (err) {
-      // Generic error handler
-      res.status(500).json({ error: 'An unknown error occurred while uploading the file.', error_msg: err });
-    }
-  })
-  // Fallback
-  .all(csrf, (req: Request, res: Response) => {
-    res.set('Allow', 'POST');
-    res.status(405).json({ error: 'Method not allowed.' });
-  });
+            res.status(201).json({ file: file.name, path: file.tempFilePath, msg: 'File uploaded successfully.', csrf: req.csrfToken() });
+        } catch (err) {
+            // Generic error handler
+            res.status(500).json({ error: 'An unknown error occurred while uploading the file.', error_msg: err });
+        }
+    })
+// Fallback
+    .all(csrf, (req: Request, res: Response) => {
+        res.set('Allow', 'POST');
+        res.status(405).json({ error: 'Method not allowed.' });
+    });
 
 /* 
     Actuate the pendulum
@@ -99,28 +99,28 @@ api.route('/upload')
 
 */
 api.route('/actuate')
-  // Snyk error mitigation, should be fine since the rate limiting is already in place
-  // file deepcode ignore NoRateLimitingForExpensiveWebOperation: This is already rate limited by the website, so we don't need to do it again
-  .post(csrf, async (req: Request, res: Response) => {
+// Snyk error mitigation, should be fine since the rate limiting is already in place
+// file deepcode ignore NoRateLimitingForExpensiveWebOperation: This is already rate limited by the website, so we don't need to do it again
+    .post(csrf, async (req: Request, res: Response) => {
     // Make sure the file being requested to run exists
-    try {
-      await access(req.body.path);
-    } catch (err) {
-      return res.status(403).json({ error: 'File is not accessible or does not exist.' });
-    }
+        try {
+            await access(req.body.path);
+        } catch (err) {
+            return res.status(403).json({ error: 'File is not accessible or does not exist.' });
+        }
 
 
-    const stats: Stats = await stat(req.body.path);
-    // Make sure the file being requested to run is a regular file
-    if (!stats.isFile())
-      return res.status(400).json({ error: 'File is not a regular file.' });
-    // Make sure the file being requested to run is not a directory
-    if (stats.isDirectory())
-      return res.status(400).json({ error: 'File is a directory.' });
+        const stats: Stats = await stat(req.body.path);
+        // Make sure the file being requested to run is a regular file
+        if (!stats.isFile())
+            return res.status(400).json({ error: 'File is not a regular file.' });
+        // Make sure the file being requested to run is not a directory
+        if (stats.isDirectory())
+            return res.status(400).json({ error: 'File is a directory.' });
 
-    const escaped = quote([req.body.path]);
-    // Run the code
-    /*
+        const escaped = quote([req.body.path]);
+        // Run the code
+        /*
         TODO:
         - Potentially add the limiter to one-per-person here
         - Add a timeout
@@ -128,25 +128,25 @@ api.route('/actuate')
         - Make this more secure
             - HOW?
     */
-    let output = '';
-    const actuation = spawn('python', escaped.split(' '));
-    actuation.stdout.on('data', (data: Buffer) => {
-      output += data.toString();
+        let output = '';
+        const actuation = spawn('python', escaped.split(' '));
+        actuation.stdout.on('data', (data: Buffer) => {
+            output += data.toString();
+        });
+        actuation.stderr.on('data', (data: Buffer) => {
+            output += `STDERR: ${data.toString()}`;
+        });
+        actuation.on('close', (code: number) => {
+            if (code !== 0)
+                return res.status(500).json({ error: `Program exited with exit code ${code}`, error_msg: output });
+            return res.status(200).json({ stdout: output });
+        });
+    })
+// Fallback
+    .all(csrf, (req: Request, res: Response) => {
+        res.set('Allow', 'POST');
+        res.status(405).json({ error: 'Method not allowed.' });
     });
-    actuation.stderr.on('data', (data: Buffer) => {
-      output += `STDERR: ${data.toString()}`;
-    });
-    actuation.on('close', (code: number) => {
-      if (code !== 0)
-        return res.status(500).json({ error: `Program exited with exit code ${code}`, error_msg: output });
-      return res.status(200).json({ stdout: output });
-    });
-  })
-  // Fallback
-  .all(csrf, (req: Request, res: Response) => {
-    res.set('Allow', 'POST');
-    res.status(405).json({ error: 'Method not allowed.' });
-  });
 
 
 export default api;
