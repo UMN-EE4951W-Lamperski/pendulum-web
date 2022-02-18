@@ -31,5 +31,5 @@ The structure of the repository is as follows:
 │ │ ├── pages (Template files for the main static pages)
 │ │ └── partials (Boilerplate used by every static page)
 | └── index.ts (the entry point, where the static content is served)
-
+└── README.md (what you are currently reading)
 ```
