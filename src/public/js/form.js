@@ -1,3 +1,5 @@
+// This is split into comments so it doesn't look as gross with the closure tabs
+
 window.onload = function () {
     document.getElementById('nojs').hidden = true;
     document.getElementById('block').hidden = false;
@@ -10,6 +12,7 @@ document.getElementById('upload').onsubmit = function () {
     document.getElementById('upload-err').innerText = '';
     document.getElementById('actuate-err').innerText = '';
     document.getElementById('upload-response').innerText = '';
+    document.getElementById('download-link').innerText = '';
     // Make AJAX request
     let xhr = new XMLHttpRequest();
     xhr.open('POST', '/api/v1/upload');
@@ -43,8 +46,7 @@ function actuate(file) {
     let xhr = new XMLHttpRequest();
     xhr.open('POST', '/api/v1/actuate');
     let data = {
-        name: file.name,
-        path: file.path,
+        file: file.file
     };
     xhr.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
     xhr.setRequestHeader('X-CSRF-TOKEN', file.csrf);
@@ -54,6 +56,7 @@ function actuate(file) {
             let response = JSON.parse(xhr.responseText);
             if (xhr.status === 200) {
                 console.log(response);
+                createDownload(response.file);
             } else {
                 // Display upload error message to the user
                 document.getElementById('actuate-err').innerText = response.error;
@@ -61,6 +64,20 @@ function actuate(file) {
                 if (xhr.status === 500)
                     console.error(response.error_msg);
             }
+            return;
         }
     };
+}
+
+
+// Creates the download element
+function createDownload(response) {
+    const tempName = response.filename;
+    const downloadName = response.name.split('.')[ 0 ];
+    const downloadLink = document.createElement('a');
+    downloadLink.setAttribute('href', `/api/v1/download/?filename=${tempName}`);
+    downloadLink.setAttribute('download', `${downloadName}.csv`);
+    downloadLink.innerText = 'Download CSV of results here.';
+    document.getElementById('download-link').appendChild(downloadLink);
+    return;
 }

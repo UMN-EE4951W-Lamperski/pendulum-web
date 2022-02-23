@@ -28,7 +28,7 @@ p {
 
 /* Used for id=button1 */
 
-#actuate_but {
+#actuate-but {
     background-color: #0a3f73;
     border: solid;
     border-color: #d5d6d2;
@@ -45,7 +45,7 @@ p {
 
 /* Used for id=button1 - What the button looks like when a user puts one's cursor on it */
 
-#actuate_but:hover {
+#actuate-but:hover {
     background-color: white;
     color: maroon;
     cursor: pointer;

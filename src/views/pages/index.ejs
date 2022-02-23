@@ -19,8 +19,12 @@
     <h1>Please upload a Python file (.py file extension) to run on the Inverted Pendulum.</h1>
     <h3>A heavily documented example can be <a href="public/example.py">found here</a>.</h3>
     <h2>
+      <br />
       <span class="error" id="upload-err"></span>
       <span class="error" id="actuate-err"></span>
+      <br>
+      <div id="upload-response"></div>
+      <div id="actuate-response"></div>
     </h2>
 
     <form id="upload" enctype="multipart/form-data">
@@ -28,11 +32,12 @@
       <input type="file" name="file" accept=".py" />
       <br /> <br />
       <label id="Start">Start pendulum: </label>
-      <input type="submit" id="actuate_but" value="Actuate!" />
+      <input type="submit" id="actuate-but" value="Actuate!" />
     </form>
-    <h2>
-      <div id="upload-response"></div>
-    </h2>
+    <h3>
+        <span id="download-link"></span>
+    </h3>
+
 
   </div>
 

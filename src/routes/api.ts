@@ -3,7 +3,6 @@ import cookieParser from 'cookie-parser';
 import csurf from 'csurf';
 import express, { Request, Response } from 'express';
 import fileUpload, { UploadedFile } from 'express-fileupload';
-import { Stats } from 'fs';
 import { access, stat } from 'fs/promises';
 import { quote } from 'shell-quote';
 
@@ -62,13 +61,13 @@ api.route('/upload')
             if (file.mimetype !== 'text/x-python')
                 return res.status(415).json({ error: 'File uploaded was not a Python file.' });
 
-            res.status(201).json({ file: file.name, path: file.tempFilePath, msg: 'File uploaded successfully.', csrf: req.csrfToken() });
+            res.status(201).json({ file: { file: file.name, path: file.tempFilePath }, msg: 'File uploaded successfully.', csrf: req.csrfToken() });
         } catch (err) {
             // Generic error handler
             res.status(500).json({ error: 'An unknown error occurred while uploading the file.', error_msg: err });
         }
     })
-// Fallback
+    // Fallback
     .all(csrf, (req: Request, res: Response) => {
         res.set('Allow', 'POST');
         res.status(405).json({ error: 'Method not allowed.' });
@@ -78,12 +77,18 @@ api.route('/upload')
     Actuate the pendulum
     POST /api/v1/actuate
     Parameters:
-        name: The name of the file to run, currently unused
-        path: The path to the uploaded file on the server, passed in from /api/v1/upload on the website
+        file: {
+            name: The name of the file to run, currently unused
+            path: The path to the uploaded file on the server, passed in from /api/v1/upload on the website
+        }
     Returns:
         200:
             {
                 "stdout": "Hello from Python!\n",
+                "file": {
+                    "name": "file.py",
+                    "filename": "file-538126",
+                }
             }
         400 for when the file passed in is not a regular file
         403 when the file is not accessible
@@ -99,54 +104,126 @@ api.route('/upload')
 
 */
 api.route('/actuate')
-// Snyk error mitigation, should be fine since the rate limiting is already in place
-// file deepcode ignore NoRateLimitingForExpensiveWebOperation: This is already rate limited by the website, so we don't need to do it again
+    // Snyk error mitigation, should be fine since the rate limiting is already in place
+    // file deepcode ignore NoRateLimitingForExpensiveWebOperation: This is already rate limited by the website, so we don't need to do it again
     .post(csrf, async (req: Request, res: Response) => {
-    // Make sure the file being requested to run exists
         try {
-            await access(req.body.path);
+            const path: string = req.body.file.path;
+            // Verify that the file exists and is a regular file
+            // Return if not since the res will be sent by the verifyFile function
+            if (await verifyFile(path, res) !== true)
+                return;
+
+            const escaped = quote([ path ]);
+            // Run the code
+            /*
+            TODO:
+            - Potentially add the limiter to one-per-person here
+            - Add a timeout
+                - Communicate to the machine to give up (the user as well), maybe just kill the process?
+            - Make this more secure
+                - HOW?
+        */
+            let output = '';
+            const actuation = spawn('python', escaped.split(' '));
+            actuation.stdout.on('data', (data: Buffer) => {
+                output += data.toString();
+            });
+            actuation.stderr.on('data', (data: Buffer) => {
+                output += `STDERR: ${data.toString()}`;
+            });
+            actuation.on('close', (code: number) => {
+                // Make sure the program exited with a code of 0 (success)
+                if (code !== 0)
+                    return res.status(500).json({ error: `Program exited with exit code ${code}`, error_msg: output });
+                const filename: string = (req.body.file.path as string).split('/').pop() as string;
+                return res.status(200).json({ stdout: output, file: { name: req.body.file.file, filename: filename } });
+            });
+            // Kill the process if it takes too long
+            // Default timeout is 120 seconds (2 minutes)
+            setTimeout(() => {
+                actuation.kill();
+            }, 120000);
         } catch (err) {
-            return res.status(403).json({ error: 'File is not accessible or does not exist.' });
+            // Generic error handler
+            return res.status(500).json({ error: 'An unknown error occurred while running the file.', error_msg: err });
+        }
+    })
+    // Fallback
+    .all(csrf, (req: Request, res: Response) => {
+        res.set('Allow', 'POST');
+        return res.status(405).json({ error: 'Method not allowed.' });
+    });
+
+
+api.route('/download')
+    .get(csrf, async (req: Request, res: Response) => {
+        const path: string = `/tmp/${req.query.filename}.csv` as string;
+
+        // Make sure no path traversal is attempted
+        // This regex matches all alphanumeric characters, underscores, and dashes.
+        // MAKE SURE THIS DOES NOT ALLOW PATH TRAVERSAL
+        if (/^[\w-]+$/.test(path))
+            return res.status(403).json({ error: 'Get lost' });
+
+        // Verify that the file exists and is a regular file
+        // Return if not since the res will be sent by the verifyFile function
+        if (await verifyFile(path, res) !== true)
+            return;
+        // Read the file and send it to the client
+        res.type('text/csv');
+        // Snyk error mitigation, should be fine since tmp is private and the simple regex above should prevent path traversal
+        // deepcode ignore PT: This is probably mitigated by the regex
+        return res.sendFile(path);
+    })
+    // Fallback
+    .all(csrf, (req: Request, res: Response) => {
+        res.set('Allow', 'GET');
+        return res.status(405).json({ error: 'Method not allowed.' });
+    });
+
+
+/*
+    Verify that the file exists and is a regular file
+    Parameters:
+        path: The path to the file on the server
+        res: The response object to send the unsuccessful response to
+    Returns:
+        true: The file exists and is a regular file
+        false: The file does not exist or is not a regular file
+        ** AFTER THIS POINT, THE API HAS ALREADY SENT A RESPONSE, SO THE FUNCTION THAT CALLED IT SHOULD NOT RETURN ANOTHER RESPONSE **
+*/
+async function verifyFile(file: string, res: Response) {
+    // Make sure the file being requested to run exists
+    try {
+        await access(file);
+    } catch (err) {
+        res.status(403).json({ error: 'File is not accessible or does not exist.' });
+        return false;
+    }
+    // This is a try catch because otherwise type checking will fail and get all messed up
+    // Handle your promise rejections, kids
+    try {
+        const stats = await stat(file);
+        // Make sure the file being requested to run is a regular file
+        if (!stats.isFile()) {
+            res.status(400).json({ error: 'File is not a regular file.' });
+            return false;
+        }
+        // Make sure the file being requested to run is not a directory
+        else if (stats.isDirectory()) {
+            res.status(400).json({ error: 'File is a directory.' });
+            return false;
         }
 
 
-        const stats: Stats = await stat(req.body.path);
-        // Make sure the file being requested to run is a regular file
-        if (!stats.isFile())
-            return res.status(400).json({ error: 'File is not a regular file.' });
-        // Make sure the file being requested to run is not a directory
-        if (stats.isDirectory())
-            return res.status(400).json({ error: 'File is a directory.' });
-
-        const escaped = quote([req.body.path]);
-        // Run the code
-        /*
-        TODO:
-        - Potentially add the limiter to one-per-person here
-        - Add a timeout
-            - Communicate to the machine to give up (the user as well), maybe just kill the process?
-        - Make this more secure
-            - HOW?
-    */
-        let output = '';
-        const actuation = spawn('python', escaped.split(' '));
-        actuation.stdout.on('data', (data: Buffer) => {
-            output += data.toString();
-        });
-        actuation.stderr.on('data', (data: Buffer) => {
-            output += `STDERR: ${data.toString()}`;
-        });
-        actuation.on('close', (code: number) => {
-            if (code !== 0)
-                return res.status(500).json({ error: `Program exited with exit code ${code}`, error_msg: output });
-            return res.status(200).json({ stdout: output });
-        });
-    })
-// Fallback
-    .all(csrf, (req: Request, res: Response) => {
-        res.set('Allow', 'POST');
-        res.status(405).json({ error: 'Method not allowed.' });
-    });
-
+        // File does exist and is a regular file, so it is good to go
+        return true;
+    }
+    catch (err) {
+        res.status(404).json({ error: 'File is not accessible or does not exist.' });
+        return false;
+    }
+}
 
 export default api;
