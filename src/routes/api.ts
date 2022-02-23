@@ -155,16 +155,29 @@ api.route('/actuate')
         return res.status(405).json({ error: 'Method not allowed.' });
     });
 
-
+/*
+    Download the CSV file after running the pendulum
+    GET /api/v1/download
+    Parameters:
+        filename: The name of the file to download
+    Returns:
+        200: (the CSV file)
+        403 when someone is trying to do directory traversal
+        404 when the file is not accessible or does not exist
+        500 for any other errors
+*/
 api.route('/download')
     .get(csrf, async (req: Request, res: Response) => {
-        const path: string = `/tmp/${req.query.filename}.csv` as string;
-
+        const filename: string = req.query.filename as string;
+        if (!filename)
+            return res.status(400).json({ error: 'No filename specified.' });
         // Make sure no path traversal is attempted
         // This regex matches all alphanumeric characters, underscores, and dashes.
         // MAKE SURE THIS DOES NOT ALLOW PATH TRAVERSAL
-        if (/^[\w-]+$/.test(path))
-            return res.status(403).json({ error: 'Get lost' });
+        if (!/^[\w-]+$/.test(filename))
+            return res.status(403).json({ error: 'No.' });
+        
+        const path = `/tmp/${filename}.csv`;
 
         // Verify that the file exists and is a regular file
         // Return if not since the res will be sent by the verifyFile function
@@ -198,7 +211,7 @@ async function verifyFile(file: string, res: Response) {
     try {
         await access(file);
     } catch (err) {
-        res.status(403).json({ error: 'File is not accessible or does not exist.' });
+        res.status(404).json({ error: 'File is not accessible or does not exist.' });
         return false;
     }
     // This is a try catch because otherwise type checking will fail and get all messed up
