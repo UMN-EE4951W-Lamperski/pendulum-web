@@ -57,11 +57,12 @@ function actuate(file) {
             if (xhr.status === 200 || xhr.status === 500) {
                 createDownload(response.file);
             }
-            // Display upload error message to the user
-            document.getElementById('actuate-err').innerText = response.error;
-            // DEBUG: Print full error if unknown error occurs
-            if (xhr.status === 500)
+            if (xhr.status === 500) {
+                document.getElementById('actuate-err').innerText = response.error;
+                // DEBUG: Print full error if unknown error occurs
                 console.error(response.error_msg);
+            }
+
         }
         return;
     };
