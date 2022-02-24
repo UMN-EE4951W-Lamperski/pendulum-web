@@ -133,10 +133,10 @@ api.route('/actuate')
                 stderr += `STDERR: ${data.toString()}`;
             });
             actuation.on('close', (code: number) => {
+                const filename: string = (req.body.file.path as string).split('/').pop() as string;
                 // Make sure the program exited with a code of 0 (success)
                 if (code !== 0)
-                    return res.status(500).json({ error: `Program exited with exit code ${code}`, error_msg: stderr });
-                const filename: string = (req.body.file.path as string).split('/').pop() as string;
+                    return res.status(500).json({ error: `Program exited with exit code ${code}`, error_msg: stderr, file: { name: req.body.file.file, filename: filename } });
                 return res.status(200).json({ file: { name: req.body.file.file, filename: filename } });
             });
             // Kill the process if it takes too long
