@@ -3,7 +3,7 @@
 window.onload = function () {
     document.getElementById('nojs').hidden = true;
     document.getElementById('block').hidden = false;
-};  
+};
 
 // File submit AJAX request
 // After successful upload, actuate the file by calling actuate() on the successfully uploaded file
@@ -54,24 +54,24 @@ function actuate(file) {
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4) {
             let response = JSON.parse(xhr.responseText);
-            if (xhr.status === 200) {
-                console.log(response);
+            if (xhr.status === 200 || xhr.status === 500) {
                 createDownload(response.file);
-            } else {
-                // Display upload error message to the user
-                document.getElementById('actuate-err').innerText = response.error;
-                // DEBUG: Print full error if unknown error occurs
-                if (xhr.status === 500)
-                    console.error(response.error_msg);
             }
-            return;
+            // Display upload error message to the user
+            document.getElementById('actuate-err').innerText = response.error;
+            // DEBUG: Print full error if unknown error occurs
+            if (xhr.status === 500)
+                console.error(response.error_msg);
         }
+        return;
     };
 }
 
 
 // Creates the download element
 function createDownload(response) {
+    if (!response)
+        return;
     const tempName = response.filename;
     const downloadName = response.name.split('.')[ 0 ];
     const downloadLink = document.createElement('a');

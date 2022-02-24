@@ -41,7 +41,7 @@ api.use(fileUpload({
             }
         400 when there is no file
         413 when the file is too large
-        415 when the file's MIME type is not text/x-python
+        415 when the file's MIME type is not text/x-python or text/plain (WINDOWS WHY)
         500 for any other errors
 */
 api.route('/upload')
@@ -58,7 +58,7 @@ api.route('/upload')
                 return res.status(413).json({ error: 'File uploaded was too large.' });
 
             // Check if the file is a python file
-            if (file.mimetype !== 'text/x-python')
+            if (file.mimetype !== 'text/x-python' && file.mimetype !== 'text/plain')
                 return res.status(415).json({ error: 'File uploaded was not a Python file.' });
 
             res.status(201).json({ file: { file: file.name, path: file.tempFilePath }, msg: 'File uploaded successfully.', csrf: req.csrfToken() });
@@ -84,7 +84,6 @@ api.route('/upload')
     Returns:
         200:
             {
-                "stdout": "Hello from Python!\n",
                 "file": {
                     "name": "file.py",
                     "filename": "file-538126",
@@ -124,20 +123,21 @@ api.route('/actuate')
             - Make this more secure
                 - HOW?
         */
-            let output = '';
+            // let output = '';
+            let stderr = '';
             const actuation = spawn('python', escaped.split(' '));
-            actuation.stdout.on('data', (data: Buffer) => {
-                output += data.toString();
-            });
+            // actuation.stdout.on('data', (data: Buffer) => {
+            //     output += data.toString();
+            // });
             actuation.stderr.on('data', (data: Buffer) => {
-                output += `STDERR: ${data.toString()}`;
+                stderr += `STDERR: ${data.toString()}`;
             });
             actuation.on('close', (code: number) => {
                 // Make sure the program exited with a code of 0 (success)
                 if (code !== 0)
-                    return res.status(500).json({ error: `Program exited with exit code ${code}`, error_msg: output });
+                    return res.status(500).json({ error: `Program exited with exit code ${code}`, error_msg: stderr });
                 const filename: string = (req.body.file.path as string).split('/').pop() as string;
-                return res.status(200).json({ stdout: output, file: { name: req.body.file.file, filename: filename } });
+                return res.status(200).json({ file: { name: req.body.file.file, filename: filename } });
             });
             // Kill the process if it takes too long
             // Default timeout is 120 seconds (2 minutes)
