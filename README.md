@@ -1,7 +1,7 @@
 # Lamperski Inverted Pendulum - Web
 
 [![GitHub Actions](https://github.com/RosstheRoss/4951w-pendulum/actions/workflows/node.yml/badge.svg)](https://github.com/RosstheRoss/4951w-pendulum/actions/workflows/node.yml)
-[![Known Vulnerabilities](<https://snyk.io/test/github/UMN-EE4951W-Lamperski/pendulum-web/badge.svg>)](<https://snyk.io/test/github/UMN-EE4951W-Lamperski/pendulum-web>)
+[![Known Vulnerabilities](https://snyk.io/test/github/UMN-EE4951W-Lamperski/pendulum-web/badge.svg)](https://snyk.io/test/github/UMN-EE4951W-Lamperski/pendulum-web)
 
 An complete rewrite of the web application for Professor Andrew Lamperski's Remotely Accessible Inverted Pendulum, in TypeScript.
 
@@ -16,6 +16,7 @@ An complete rewrite of the web application for Professor Andrew Lamperski's Remo
 ## Structure
 
 The structure of the repository is as follows:
+
 ```
 ├── src (folder)
 │ ├── public (folder)

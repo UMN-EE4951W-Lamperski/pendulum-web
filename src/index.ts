@@ -20,13 +20,12 @@ const csrf = csurf({ cookie: true });
 
 // Rate limiting
 const rateLimiter = rateLimit({
-    windowMs: 1 * 60 * 1000, // 1 minute
-    max: 40, // Limit each IP to 40 requests per `window` (here, per 1 minutes)
-    standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-    legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 40, // Limit each IP to 40 requests per `window` (here, per 1 minutes)
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 });
 app.use(rateLimiter);
-
 
 // The API
 app.use('/api/v1/', api);
@@ -40,14 +39,14 @@ app.use('/public', express.static(path.join(__dirname, 'public'))); // Set stati
 /* ROUTING */
 
 app.get('/', csrf, (req: Request, res: Response) => {
-    res.render('index', { csrfToken: req.csrfToken() });
+  res.render('index', { csrfToken: req.csrfToken() });
 });
 app.get('/about', csrf, (req: Request, res: Response) => {
-    res.render('about');
+  res.render('about');
 });
 
 // Start the server
 const port = env.PORT || 2000;
 app.listen(port, () => {
-    console.log(`Server is listening on port ${port}`);
+  console.log(`Server is listening on port ${port}`);
 });
