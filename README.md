@@ -7,10 +7,7 @@ An complete rewrite of the web application for Professor Andrew Lamperski's Remo
 
 ## TODO
 
-- Feature parity with the original web application.
-  - This includes running the python scripts like the Flask app did.
 - Login with the University's Shibboleth system.
-- Add the livestreaming feature.
 - **Improve the readme.**
 
 ## Structure
