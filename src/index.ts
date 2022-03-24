@@ -5,7 +5,7 @@ import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import path from 'path';
 import { env } from 'process';
-import api from './routes/api';
+import api from './routes/pendulum';
 
 const app = express();
 

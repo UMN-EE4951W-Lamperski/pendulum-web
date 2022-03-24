@@ -6,6 +6,9 @@ import fileUpload, { UploadedFile } from 'express-fileupload';
 import { access, stat } from 'fs/promises';
 import { quote } from 'shell-quote';
 
+/**
+ * The endpoint for the API calls involving file uploads and running the files on the pendulum.
+ */
 const api = express.Router();
 
 // Use JSON parser for API requests and responses
@@ -217,16 +220,14 @@ api
     return res.status(405).json({ error: 'Method not allowed.' });
   });
 
-/*
-    Verify that the file exists and is a regular file
-    Parameters:
-        path: The path to the file on the server
-        res: The response object to send the unsuccessful response to
-    Returns:
-        true: The file exists and is a regular file
-        false: The file does not exist or is not a regular file
-        ** AFTER THIS POINT, THE API HAS ALREADY SENT A RESPONSE, SO THE FUNCTION THAT CALLED IT SHOULD NOT RETURN ANOTHER RESPONSE **
-*/
+/**
+ * Verify that the file exists and is a regular file so it can be sent to the user
+ * @param file The path to the file
+ * @param res The Express response object, used if the file is not accessible
+ * @returns `true` if the file exists and is a regular file,`false` otherwise
+ *
+ * `AFTER THIS POINT, THE API HAS ALREADY SENT A RESPONSE, SO THE FUNCTION THAT CALLED IT SHOULD NOT RETURN ANOTHER RESPONSE `
+ */
 async function verifyFile(file: string, res: Response) {
   // Make sure the file being requested to run exists
   try {
