@@ -4,7 +4,7 @@ import { Request, Response, NextFunction } from 'express';
 const saml = function (req: Request, res: Response, next: NextFunction): void {
   const authenticator = new BasicAuthenticator(req, res);
   if (!authenticator.hasSession()) {
-    authenticator.redirectToLogin();
+    res.redirect(authenticator.buildLoginURL());
     return;
   }
   next();
