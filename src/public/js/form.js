@@ -15,7 +15,7 @@ document.getElementById('upload').onsubmit = function () {
   document.getElementById('download-link').innerText = '';
   // Make AJAX request
   let xhr = new XMLHttpRequest();
-  xhr.open('POST', '/api/v1/upload');
+  xhr.open('POST', '/api/v1/pendulum/upload');
   let formData = new FormData(this);
   xhr.send(formData);
   xhr.onreadystatechange = function () {
@@ -43,7 +43,7 @@ document.getElementById('upload').onsubmit = function () {
 //
 function actuate(file) {
   let xhr = new XMLHttpRequest();
-  xhr.open('POST', '/api/v1/actuate');
+  xhr.open('POST', '/api/v1/pendulum/actuate');
   let data = {
     file: file.file,
   };
@@ -72,7 +72,10 @@ function createDownload(response) {
   const tempName = response.filename;
   const downloadName = response.name.split('.')[0];
   const downloadLink = document.createElement('a');
-  downloadLink.setAttribute('href', `/api/v1/download/?filename=${tempName}`);
+  downloadLink.setAttribute(
+    'href',
+    `/api/v1/pendulum/download/?filename=${tempName}`
+  );
   downloadLink.setAttribute('download', `${downloadName}.csv`);
   downloadLink.innerText = 'Download CSV of results here.';
   document.getElementById('download-link').appendChild(downloadLink);

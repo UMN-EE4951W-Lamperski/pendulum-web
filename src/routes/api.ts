@@ -222,13 +222,13 @@ api
 
 /**
  * Verify that the file exists and is a regular file so it can be sent to the user
- * @param file The path to the file
- * @param res The Express response object, used if the file is not accessible
- * @returns `true` if the file exists and is a regular file,`false` otherwise
+ * @param {string} file The path to the file
+ * @param {Response} res The Express response object, used if the file is not accessible
+ * @returns {Promise<boolean>} `true` if the file exists and is a regular file,`false` otherwise
  *
  * `AFTER THIS POINT, THE API HAS ALREADY SENT A RESPONSE, SO THE FUNCTION THAT CALLED IT SHOULD NOT RETURN ANOTHER RESPONSE `
  */
-async function verifyFile(file: string, res: Response) {
+async function verifyFile(file: string, res: Response): Promise<boolean> {
   // Make sure the file being requested to run exists
   try {
     await access(file);
