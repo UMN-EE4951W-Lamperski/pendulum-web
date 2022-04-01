@@ -5,7 +5,7 @@ const saml = function (req: Request, res: Response, next: NextFunction): void {
   const authenticator = new BasicAuthenticator(req, res);
   if (!authenticator.hasSession()) {
     authenticator.redirectToLogin();
-    next();
+    return;
   }
   next();
 };

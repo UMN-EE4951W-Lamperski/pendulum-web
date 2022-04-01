@@ -10,7 +10,7 @@
     "passport": "^0.5.2",
     "passport-saml": "3.2.1",
     "shell-quote": "1.7.3",
-    "umn-shib-nodejs": "RosstheRoss/umn-shib-nodejs#master"
+    "umn-shib-nodejs": "UMN-EE4951W-Lamperski/umn-shib-nodejs#master"
   },
   "devDependencies": {
     "@types/cookie-parser": "1.4.2",
