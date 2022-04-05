@@ -5,6 +5,7 @@ import express, { Request, Response } from 'express';
 import fileUpload, { UploadedFile } from 'express-fileupload';
 import { access, stat } from 'fs/promises';
 import { quote } from 'shell-quote';
+import { saml_api } from './middleware/saml.js';
 
 /**
  * The endpoint for the API calls involving file uploads and running the files on the pendulum.
@@ -16,6 +17,9 @@ api.use(express.json());
 // CSRF protection
 api.use(cookieParser());
 const csrf = csurf({ cookie: true });
+
+// Require authentication for all API calls
+api.use(saml_api);
 
 // For file uploads
 api.use(
@@ -230,14 +234,12 @@ api
  */
 async function verifyFile(file: string, res: Response): Promise<boolean> {
   // Make sure the file being requested to run exists
-  try {
-    await access(file);
-  } catch (err) {
+  await access(file).catch(() => {
     res
       .status(404)
       .json({ error: 'File is not accessible or does not exist.' });
     return false;
-  }
+  });
   // This is a try catch because otherwise type checking will fail and get all messed up
   // Handle your promise rejections, kids
   try {

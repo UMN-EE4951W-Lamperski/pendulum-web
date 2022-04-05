@@ -43,10 +43,10 @@ app.use('/public', express.static(path.join(__dirname, 'public'))); // Set stati
 
 /* ROUTING */
 
-app.get('/', csrf, (req: Request, res: Response) => {
+app.get('/pendulum', csrf, saml, (req: Request, res: Response) => {
   res.render('index', { csrfToken: req.csrfToken() });
 });
-app.get('/about', csrf, saml, (req: Request, res: Response) => {
+app.get('/', csrf, (req: Request, res: Response) => {
   res.render('about');
 });
 app.all('/login', csrf, (req: Request, res: Response) => {
