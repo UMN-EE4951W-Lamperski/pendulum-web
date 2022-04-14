@@ -214,9 +214,7 @@ api
     if ((await verifyFile(path, res)) !== true) return;
     // Read the file and send it to the client
     res.type('text/csv');
-    // Snyk error mitigation, should be fine since tmp is private and the simple regex above should prevent path traversal
-    // deepcode ignore PT: This is probably mitigated by the regex
-    return res.sendFile(path);
+    return res.sendFile(path.replace('/~', ''));
   })
   // Fallback
   .all(csrf, (req: Request, res: Response) => {
