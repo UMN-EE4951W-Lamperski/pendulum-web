@@ -2586,7 +2586,8 @@ uid-safe@2.1.5:
 
 umn-shib-nodejs@UMN-EE4951W-Lamperski/umn-shib-nodejs#master:
   version "1.0.0"
-  resolved "https://codeload.github.com/UMN-EE4951W-Lamperski/umn-shib-nodejs/tar.gz/74dd27881511e676d7f782141fe736fbe5763062"
+  uid "83cbf1cba25fa767df34ef08b9179a95cfc4cf4b"
+  resolved "https://codeload.github.com/UMN-EE4951W-Lamperski/umn-shib-nodejs/tar.gz/83cbf1cba25fa767df34ef08b9179a95cfc4cf4b"
 
 unbox-primitive@^1.0.1:
   version "1.0.1"
