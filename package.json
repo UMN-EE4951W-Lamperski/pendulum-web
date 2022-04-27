@@ -13,7 +13,7 @@
     "umn-shib-nodejs": "UMN-EE4951W-Lamperski/umn-shib-nodejs#master"
   },
   "devDependencies": {
-    "@types/cookie-parser": "1.4.2",
+    "@types/cookie-parser": "1.4.3",
     "@types/csurf": "1.11.2",
     "@types/express": "4.17.13",
     "@types/express-fileupload": "1.2.2",
